@@ -1,0 +1,7 @@
+# No external dependencies yet. Using built-in Python modules.
+#
+# Future Plans
+# requests  # For API calls to Jisho, Tatoeba, etc.
+# sqlite3   # Optional, built-in but some people specify it
+# pandas    # If you want to export to CSV easily
+# PySimpleGUI  # If you make a GUI
