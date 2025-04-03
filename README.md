@@ -95,3 +95,7 @@ Follow the prompts to look up and log new words.
 ## 📣 Follow My Learning Journey
 
 I’m documenting my progress, mistakes, and what I learn as I build this project.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
