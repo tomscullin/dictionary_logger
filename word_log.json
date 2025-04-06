@@ -20,5 +20,61 @@
             "sentence": "計画通りですね",
             "time": "15:16"
         }
+    ],
+    "2025-04-06": [
+        {
+            "word": "簡単",
+            "meaning": "simple, easy, uncomplicated",
+            "sentences": [
+                "簡単そうね。 - It sounds easy.",
+                "簡単だった。 - It was easy."
+            ],
+            "time": "16:01"
+        },
+        {
+            "word": "改善",
+            "meaning": "betterment, improvement",
+            "sentences": [
+                "状況は改善の余地がある。 - The situation is capable of improvement.",
+                "その事は改善されないだろう。 - I doubt whether this will improve."
+            ],
+            "time": "16:08"
+        },
+        {
+            "word": "なかなか",
+            "meaning": "very, considerably, easily, readily, fairly, quite, highly, rather",
+            "sentences": [
+                "なかなかやるなあ。 - It's pretty good.",
+                "なかなか興味深いね。 - That's quite interesting."
+            ],
+            "tags": [
+                "adverb"
+            ],
+            "time": "16:11"
+        },
+        {
+            "word": "物の哀れ",
+            "meaning": "mono no aware, appreciation of the fleeting nature of beauty, pathos of things, strong aesthetic sense",
+            "sentences": [],
+            "tags": [
+                "noun",
+                "expressions (phrases, clauses, etc.)"
+            ],
+            "time": "16:16"
+        },
+        {
+            "word": "素早い",
+            "meaning": "quick, swift, nimble, agile",
+            "sentences": [
+                "彼は素早い。 - He moves quickly.",
+                "捕らえることのできないもの、身軽で素早いもののたとえ、だそうです。 - It's apparently a metaphor for something uncatchable, light of body and fleet of foot."
+            ],
+            "tags": [
+                "common_word",
+                "i-adjective_(keiyoushi)",
+                "jlpt-n1"
+            ],
+            "time": "16:19"
+        }
     ]
 }
