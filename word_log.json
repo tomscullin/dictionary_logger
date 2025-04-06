@@ -75,6 +75,20 @@
                 "jlpt-n1"
             ],
             "time": "16:19"
+        },
+        {
+            "word": "名詞",
+            "meaning": "noun",
+            "sentences": [
+                "「five minutes」って名詞句でいいんですよね？ - It's OK to think of 'five minutes' as a noun phrase, right?",
+                "「クレオパトラ」は美人の代名詞になっている。 - The name Cleopatra has become a byword for a beautiful woman."
+            ],
+            "tags": [
+                "common_word",
+                "jlpt-n2",
+                "noun"
+            ],
+            "time": "16:34"
         }
     ]
 }

@@ -26,11 +26,11 @@ def init_db():
                     time TEXT
                 )''')
 
-    # Add tags column if missing (for upgrades)
+    # Add tags column if missing
     try:
         c.execute("ALTER TABLE words ADD COLUMN tags TEXT")
     except sqlite3.OperationalError:
-        pass  # Already exists
+        pass
 
     conn.commit()
     conn.close()
@@ -48,18 +48,13 @@ def lookup_word(word):
             entry = data["data"][0]
             meaning = ", ".join(entry["senses"][0]["english_definitions"])
 
-            # Extract tags
+            # Extract auto-tags
             tags = set()
 
-            # Add part of speech
             for pos in entry["senses"][0].get("parts_of_speech", []):
                 tags.add(pos.lower().replace(" ", "_"))
-
-            # Add JLPT tag
             for jlpt_tag in entry.get("jlpt", []):
                 tags.add(jlpt_tag.lower())
-
-            # Common word check
             if entry.get("is_common"):
                 tags.add("common_word")
 
@@ -99,6 +94,33 @@ def open_jpdb(word):
     url = f"https://jpdb.io/search?q={word}"
     print(f"🌐 Opening JPDB.io in your browser: {url}")
     webbrowser.open(url)
+
+def search_jisho(query, max_results=5):
+    url = f"https://jisho.org/api/v1/search/words?keyword={query}"
+    response = requests.get(url)
+    results = []
+
+    if response.status_code == 200:
+        data = response.json()
+        for entry in data.get("data", [])[:max_results]:
+            word = entry["japanese"][0].get("word") or entry["japanese"][0].get("reading")
+            meaning = ", ".join(entry["senses"][0]["english_definitions"])
+
+            tags = set()
+            for pos in entry["senses"][0].get("parts_of_speech", []):
+                tags.add(pos.lower().replace(" ", "_"))
+            for jlpt_tag in entry.get("jlpt", []):
+                tags.add(jlpt_tag.lower())
+            if entry.get("is_common"):
+                tags.add("common_word")
+
+            results.append({
+                "word": word,
+                "meaning": meaning,
+                "tags": sorted(tags)
+            })
+
+    return results
 
 # ===========================
 # JSON LOG FUNCTIONS
@@ -186,10 +208,9 @@ def get_todays_log():
         return
     print(f"\n📅 Today's Log ({today}):")
     for word, meaning, sentences, tags, time in entries:
-        sentence_list = json.loads(sentences)
         print(f"- {word}: {meaning}")
         print(f"  🔖 Tags: {tags}")
-        for s in sentence_list:
+        for s in json.loads(sentences):
             print(f"    • {s} ({time})")
 
 def view_full_log():
@@ -216,11 +237,14 @@ def main():
     init_db()
     while True:
         print("\n--- Japanese Dictionary Logger ---")
-        print("1. Look up a word")
-        print("2. View today's log")
-        print("3. View full log")
-        print("4. Export log to CSV")
-        print("5. Quit")
+        print("1. Look up a Japanese word")
+        print("2. Look up an English word")
+        print("3. Search by tag")
+        print("4. Search by JLPT level")
+        print("5. View today's log")
+        print("6. View full log")
+        print("7. Export log to CSV")
+        print("8. Quit")
         choice = input("Choose an option: ").strip()
 
         if choice == "1":
@@ -239,7 +263,6 @@ def main():
 
             auto_tags = result.get("auto_tags", [])
             print(f"🔖 Auto-tags: {', '.join(auto_tags) if auto_tags else 'None found'}")
-
             tag_input = input("Add more tags? (comma-separated or leave blank): ").strip()
             user_tags = [tag.strip().lower().replace(" ", "_") for tag in tag_input.split(",") if tag.strip()]
             tags = sorted(set(auto_tags + user_tags))
@@ -262,15 +285,49 @@ def main():
             log_word(result, sentences, tags)
 
         elif choice == "2":
-            get_todays_log()
+            eng_query = input("Enter English word to search in Jisho: ").strip()
+            print("🔎 Searching Jisho...")
+            results = search_jisho(eng_query)
+            if not results:
+                print("❌ No results found.")
+            else:
+                print(f"🈶 English-Japanese Results for '{eng_query}':")
+                for i, res in enumerate(results, 1):
+                    print(f"{i}. {res['word']}: {res['meaning']} [tags: {', '.join(res['tags'])}]")
 
         elif choice == "3":
-            view_full_log()
+            tag_query = input("Enter part-of-speech tag to search in Jisho (e.g. noun, expression, slang): ").strip().lower()
+            print("🔎 Searching Jisho...")
+            results = search_jisho(tag_query)
+            if not results:
+                print("❌ No results found.")
+            else:
+                print(f"🔖 Entries containing tag '{tag_query}':")
+                for i, res in enumerate(results, 1):
+                    print(f"{i}. {res['word']}: {res['meaning']} [tags: {', '.join(res['tags'])}]")
 
         elif choice == "4":
-            export_log_to_csv()
+            level = input("Enter JLPT level (e.g. jlpt-n5, jlpt-n1): ").strip().lower()
+            print("🔎 Searching Jisho...")
+            results = search_jisho(level)
+            if not results:
+                print("❌ No JLPT results found.")
+            else:
+                print(f"📘 Entries tagged with '{level}':")
+                for i, res in enumerate(results, 1):
+                    print(f"{i}. {res['word']}: {res['meaning']} [tags: {', '.join(res['tags'])}]")
+
 
         elif choice == "5":
+            get_todays_log()
+
+        elif choice == "6":
+            view_full_log()
+
+        elif choice == "7":
+            export_log_to_csv()
+
+        elif choice == "8":
             print("👋 Goodbye!")
             break
 
